@@ -26,15 +26,27 @@ def main():
     try:
         input = open(args.filename, 'rU')
         
+        cords = []
+
         for line in input:
             line = string.replace(line, '\n', '')
-            city_info = string.split(line, " ")
+            city_info = map(int,  string.split(line, " ") )
 
-            cords = city_info[1:2]            
-            
-
-
+            cords.append(city_info[1:3])
+        
+        print range(0)
+        print cords 
+        print cords[2]
      
+        distance = [[0 for j in range(len(cords))] for i in range(len(cords))]
+
+        for i in range( len(cords) ):
+            
+            for j in (range( i ) + range( i+1, len(cords) )):
+                distance[i][j] = get_distance( cords[i], cords[j] )
+
+        
+        tour = travel(distance)
 
     except IOError:
         print("Error Opening File")
@@ -44,11 +56,18 @@ def main():
 
     return 0
 
-def travel():
+def travel(distance):
+
+    not_visted = range(len(distance))
+    visited = []
+
+    for x in :
+
+
     return ""
 
-def distance():
-    return ""
+def get_distance(city1, city2):
+    return (city1[0]-city2[0])**2 + (city1[1]-city2[1])**2
 
 def compare():
     return ""
