@@ -18,7 +18,7 @@ namespace TSPLul
 
         static void ParseFile()
         {
-            string filename = "example-input-2.txt"; //Change this for test inputs
+            string filename = "example-input-3.txt"; //Change this for test inputs
 
             using (StreamReader reader = new StreamReader(filename))
             {
@@ -63,7 +63,9 @@ namespace TSPLul
             //Start at city 0
             int currentCity = 0;
             Point currentPoint = cities[currentCity];
-            //Add City 0 to the path and remove it from the possible cities to determine the path to
+            
+			Point startCity = currentPoint;
+			//Add City 0 to the path and remove it from the possible cities to determine the path to
             path.Add(currentCity);
             cities.Remove(currentCity);
 
@@ -76,7 +78,7 @@ namespace TSPLul
                 int city = cities.MinBy(other => currentPoint.Distance(other.Value)).Key;
                 double distance = currentPoint.Distance(cities[city]);
 
-                totalDistance += distance;
+                totalDistance += Math.Round(distance);
                 //Progress to the next city and remove it from the list of distances to search
                 currentCity = city;
                 currentPoint = cities[city];
@@ -84,10 +86,14 @@ namespace TSPLul
                 cities.Remove(city);
                 path.Add(city);
                              
-                
+				//Console.WriteLine("Distance :"+totalDistance+" City Chosen: "+city+" Path Length: "+path.Count);
             }
+
+			totalDistance += Math.Round (currentPoint.Distance(startCity));
+
             //Stop the timer and write stuff out to a file
             watch.Stop();
+
             Console.WriteLine("Total Distance: " + totalDistance + " Time: " + watch.ElapsedMilliseconds + "ms");
             WritePath(totalDistance);
             //Console.ReadKey(); //Comment/Uncomment this line if you want to pause execution and wait for keyboard
