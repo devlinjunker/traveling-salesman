@@ -18,13 +18,14 @@ namespace TSPLul
 
         static void ParseFile()
         {
-            string filename = "example-input-3.txt"; //Change this for test inputs
+            string filename = "test-input-3.txt"; //Change this for test inputs
 
             using (StreamReader reader = new StreamReader(filename))
             {
                 while (!reader.EndOfStream)
                 {
-                    string[] s = reader.ReadLine().Trim().Split(' ');
+                    string line = reader.ReadLine();
+                    string[] s = line.Trim().Split(' ');
                     int name = int.Parse(s[0]);
                     int x = int.Parse(s[1]);
                     int y = int.Parse(s[2]);
