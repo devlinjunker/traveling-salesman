@@ -9,9 +9,11 @@ def main(instancefile, solutionfile, method):
     solution = readsolution(solutionfile)
     checksolution(cities, solution[0][0], solution[1])
     
-    difference = (solution[0][0] - optimal[int(method)-1]) / float(optimal[int(method)-1])*100;
+    if( method != 0):
+        difference = (solution[0][0] - optimal[int(method)-1]) / float(optimal[int(method)-1])*100
 
-    print "Difference of {}%".format( int(difference) )
+        print "Difference of {}%".format( int(difference) )
+
     
 def distance(a,b):
     # a and b are integer pairs (each representing a point in a 2D, integer grid)
@@ -79,4 +81,4 @@ def checksolution(cities, value, cityorder):
         if not(cityorder[i] == i):
             print('city not found: ', i)
 
-main(sys.argv[1], sys.argv[2], sys.argv[3])
+main(sys.argv[1], sys.argv[2], ( sys.argv[3] if (len(sys.argv) > 3) else 0) )
