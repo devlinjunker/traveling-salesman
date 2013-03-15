@@ -81,4 +81,5 @@ Thumbs.db
 bin/
 obj/
 *.suo
+*.userprefs
 *.user
