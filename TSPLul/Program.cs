@@ -18,7 +18,7 @@ namespace TSPLul
 
         static void ParseFile()
         {
-            string filename = "test-input-3.txt"; //Change this for test inputs
+            string filename = "example-input-3.txt"; //Change this for test inputs
 
             using (StreamReader reader = new StreamReader(filename))
             {
@@ -58,6 +58,7 @@ namespace TSPLul
 
             ParseFile();
 
+			Dictionary<int, Point> city_info = new Dictionary<int, Point> (cities);
          
             double totalDistance = 0;
 
@@ -65,7 +66,6 @@ namespace TSPLul
             int currentCity = 0;
             Point currentPoint = cities[currentCity];
             
-			Point startCity = currentPoint;
 			//Add City 0 to the path and remove it from the possible cities to determine the path to
             path.Add(currentCity);
             cities.Remove(currentCity);
@@ -76,21 +76,40 @@ namespace TSPLul
             while (cities.Count != 0)
             {
                 //Find the city that is closest to us and add distance to our total distance
-                int city = cities.MinBy(other => currentPoint.Distance(other.Value)).Key;
-                double distance = currentPoint.Distance(cities[city]);
+				int nextFrontCity = cities.MinBy(other => city_info[path[0]].Distance(other.Value)).Key;
+				int nextBackCity = cities.MinBy(other => city_info[path[path.Count-1]].Distance(other.Value)).Key;
+
+				double frontCityDistance, backCityDistance;
+				int city;
+
+				double distance;
+
+				if( (frontCityDistance = city_info[path[0]].Distance(city_info[nextFrontCity])) < (backCityDistance = city_info[path[path.Count-1]].Distance(city_info[nextBackCity])) )
+				{
+					distance = frontCityDistance;
+					city = nextFrontCity;
+
+					path.Insert(0, city);
+				}
+				else
+				{
+					distance = backCityDistance;
+
+					city = nextBackCity;
+
+					path.Add(city);
+				}
 
                 totalDistance += Math.Round(distance);
                 //Progress to the next city and remove it from the list of distances to search
-                currentCity = city;
-                currentPoint = cities[city];
 
                 cities.Remove(city);
-                path.Add(city);
+         
                              
 				//Console.WriteLine("Distance :"+totalDistance+" City Chosen: "+city+" Path Length: "+path.Count);
             }
 
-			totalDistance += Math.Round (currentPoint.Distance(startCity));
+			totalDistance += Math.Round (city_info[path[path.Count-1]].Distance(city_info[path[0]]));
 
             //Stop the timer and write stuff out to a file
             watch.Stop();
