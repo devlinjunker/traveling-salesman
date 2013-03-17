@@ -18,7 +18,7 @@ namespace TSPLul
 
         static void ParseFile()
         {
-            string filename = "example-input-3.txt"; //Change this for test inputs
+            string filename = "test-input-1.txt"; //Change this for test inputs
 
             using (StreamReader reader = new StreamReader(filename))
             {
@@ -39,7 +39,7 @@ namespace TSPLul
        
         static void WritePath(double totalDist)
         {
-            using (StreamWriter writer = new StreamWriter("output.txt"))
+            using (StreamWriter writer = new StreamWriter("test1.txt"))
             {
                 writer.WriteLine(totalDist);
                 for (int i = 0; i < path.Count; i++)
@@ -61,14 +61,10 @@ namespace TSPLul
 			Dictionary<int, Point> city_info = new Dictionary<int, Point> (cities);
          
             double totalDistance = 0;
-
-            //Start at city 0
-            int currentCity = 0;
-            Point currentPoint = cities[currentCity];
             
 			//Add City 0 to the path and remove it from the possible cities to determine the path to
-            path.Add(currentCity);
-            cities.Remove(currentCity);
+            path.Add(0);
+            cities.Remove(0);
 
             //Start the algorithm timer
             Stopwatch watch = new Stopwatch();
@@ -109,7 +105,57 @@ namespace TSPLul
 				//Console.WriteLine("Distance :"+totalDistance+" City Chosen: "+city+" Path Length: "+path.Count);
             }
 
-			totalDistance += Math.Round (city_info[path[path.Count-1]].Distance(city_info[path[0]]));
+			totalDistance += city_info[path[path.Count-1]].Distance(city_info[path[0]]);
+
+			double oldDistance;
+			double newDistance = totalDistance;
+
+			int temp;
+
+			for(int i = 0; i < path.Count-1; i++)
+			{
+				for(int j = 0; j < path.Count-1; j++)
+				{
+					if(i != j && j != i+1 && i!=j+1)
+					{
+						oldDistance = newDistance;
+
+
+						int loseThis = city_info[path[i]].Distance(city_info[path[i+1]]) 
+									+ city_info[path[j]].Distance(city_info[path[j+1]])
+									+ city_info[path[i+1]].Distance(city_info[path[(i+2)%path.Count]])
+									+ city_info[path[j+1]].Distance(city_info[path[(j+2)%path.Count]]);
+
+						newDistance -= loseThis;
+
+						int gainThis = city_info[path[i]].Distance(city_info[path[j+1]]) 
+									+ city_info[path[j]].Distance(city_info[path[i+1]])
+									+ city_info[path[i+1]].Distance(city_info[path[(j+2)%path.Count]])
+									+ city_info[path[j+1]].Distance(city_info[path[(i+2)%path.Count]]);
+
+						newDistance += gainThis;;
+
+
+
+						if(newDistance > oldDistance)
+						{
+							newDistance = oldDistance;
+						}
+						else
+						{
+							temp = path[i+1];
+							path[i+1] = path[j+1];
+							path[j+1] = temp;
+
+							//Console.WriteLine (newDistance);
+
+							totalDistance = newDistance;
+						}
+					}
+				}
+			}
+
+
 
             //Stop the timer and write stuff out to a file
             watch.Stop();
@@ -123,10 +169,10 @@ namespace TSPLul
 
 
         #region Extension Methods
-        static double Distance(this Point p, Point o)
+        static int Distance(this Point p, Point o)
         {
 
-            return Math.Sqrt((p.X - o.X) * (p.X - o.X) + (p.Y - o.Y) * (p.Y - o.Y));
+            return (int) Math.Round ( Math.Sqrt((p.X - o.X) * (p.X - o.X) + (p.Y - o.Y) * (p.Y - o.Y)));
         }
 
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector)
